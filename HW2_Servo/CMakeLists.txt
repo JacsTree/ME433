@@ -28,30 +28,32 @@ set(PICO_BOARD pico2 CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(HW2_Servo_c C CXX ASM)
+project(HW2_Servo C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(HW2_Servo_c HW2_Servo_c.c )
+add_executable(HW2_Servo HW2_Servo.c )
 
-pico_set_program_name(HW2_Servo_c "HW2_Servo_c")
-pico_set_program_version(HW2_Servo_c "0.1")
+pico_set_program_name(HW2_Servo "HW2_Servo")
+pico_set_program_version(HW2_Servo "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(HW2_Servo_c 0)
-pico_enable_stdio_usb(HW2_Servo_c 1)
+pico_enable_stdio_uart(HW2_Servo 0)
+pico_enable_stdio_usb(HW2_Servo 1)
 
 # Add the standard library to the build
-target_link_libraries(HW2_Servo_c
-        pico_stdlib)
+target_link_libraries(HW2_Servo
+        pico_stdlib
+        hardware_pwm
+        hardware_adc)
 
 # Add the standard include files to the build
-target_include_directories(HW2_Servo_c PRIVATE
+target_include_directories(HW2_Servo PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
 )
 
-pico_add_extra_outputs(HW2_Servo_c)
+pico_add_extra_outputs(HW2_Servo)
 
