@@ -2,5 +2,5 @@
 ---
 Repository for ME433 at Northwestern University
 
-##Homework:
+## Homework:
 - Homework 1 [HW2_Servo/]
