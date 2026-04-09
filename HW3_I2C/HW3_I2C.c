@@ -9,7 +9,7 @@
 
 #define ADDR 0x20
 
-
+//0b for binary?
 void setReg(uint8_t reg ,uint8_t value){
     uint8_t buf[2];
     buf[0] = reg;
