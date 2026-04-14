@@ -21,6 +21,14 @@ void draw_letter(int x, int y, char c){
     }   
 }
 
+void draw_message(int x, int y, char *str){
+    int counter = 0;
+    while(str[counter]!='\0'){
+        draw_letter(x+counter*5,y,str[counter]);
+        counter++;
+    }
+}
+
 int main()
 {
     stdio_init_all();
@@ -33,8 +41,12 @@ int main()
     sleep_ms(10);
     ssd1306_setup();
 
+    int i = 15;
+    char message[50]; 
+    sprintf(message, "my var = %d", i); 
+ // draw starting at x=20,y=10  
     while (true) {
-        draw_letter(10,20,'j');
+        draw_message(20,10,message);
         ssd1306_update();
         sleep_ms(500);
         
