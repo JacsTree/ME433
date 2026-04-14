@@ -35,23 +35,25 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(HW4_OLED HW4_OLED.c )
+add_executable(HW4_OLED HW4_OLED.c ssd1306.c)
 
 pico_set_program_name(HW4_OLED "HW4_OLED")
 pico_set_program_version(HW4_OLED "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(HW4_OLED 0)
-pico_enable_stdio_usb(HW4_OLED 0)
+pico_enable_stdio_usb(HW4_OLED 1)
 
 # Add the standard library to the build
 target_link_libraries(HW4_OLED
-        pico_stdlib)
+        pico_stdlib
+        hardware_i2c)
 
 # Add the standard include files to the build
 target_include_directories(HW4_OLED PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
 )
+
 
 pico_add_extra_outputs(HW4_OLED)
 
