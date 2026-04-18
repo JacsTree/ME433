@@ -156,7 +156,8 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
     break;
 
     case REPORT_ID_MOUSE:
-    {
+    {//have to put the mouse on low sensitivity in
+      //settings or circle ends up blocky
       int8_t x = 0;
       int8_t y = 0;
       if (gpio_get(4)){
@@ -168,7 +169,7 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
       else {
         gpio_put(9,1);
         static float angle = 0; //rads
-        static const float radius = 500; 
+        static const float radius = 500;
         static float prev_x=0; 
         static float prev_y=0;
         static const float step = 0.02;
