@@ -35,7 +35,7 @@ static inline void put_dac(uint8_t adc_select, uint16_t voltage){
 int main()
 {
     stdio_init_all();
-    spi_init(spi_default, 1000 * 1000 * 10); // the baud, or bits per second
+    spi_init(spi_default, 1000 * 1000 * 50); // the baud, or bits per second
     gpio_set_function(PICO_DEFAULT_SPI_RX_PIN, GPIO_FUNC_SPI);
     gpio_set_function(PICO_DEFAULT_SPI_SCK_PIN, GPIO_FUNC_SPI);
     gpio_set_function(PICO_DEFAULT_SPI_TX_PIN, GPIO_FUNC_SPI);
@@ -46,18 +46,18 @@ int main()
     uint16_t voltages_0[400];
     uint16_t voltages_1[400];
     for(int i = 0; i<200;i++){
-        voltages_0[i]=(uint16_t)(1023.9999*(i/199));
-        voltages_0[399-i]=(uint16_t)(1023.9999*(i/199));
+        voltages_0[i]=(uint16_t)(1023.9999*(i/199.0));
+        voltages_0[399-i]=(uint16_t)(1023.9999*(i/199.0));
     }
-    for(int i = 0; i<400;i++){
-        voltages_1[i]=(uint16_t)(1023.9999*((sinf((i*2*3.14159)/399)/2)+1));
-    }
+    // for(int i = 0; i<400;i++){
+    //     voltages_1[i]=(uint16_t)(1023.9999*((sinf((i*2*3.14159)/399)/2)+1));
+    // }
 
     while (true) {
         for(int i = 0; i<400; i+=4){
             put_dac(0,voltages_0[i]);
-            put_dac(1,voltages_1[i]);
-            sleep_us(1000);
+            //put_dac(1,voltages_1[i]);
+            sleep_us(5000);
         }   
     }
 }
