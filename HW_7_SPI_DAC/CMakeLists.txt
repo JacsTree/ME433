@@ -46,7 +46,8 @@ pico_enable_stdio_usb(HW_7_SPI_DAC 0)
 
 # Add the standard library to the build
 target_link_libraries(HW_7_SPI_DAC
-        pico_stdlib)
+        pico_stdlib
+        hardware_spi)
 
 # Add the standard include files to the build
 target_include_directories(HW_7_SPI_DAC PRIVATE
