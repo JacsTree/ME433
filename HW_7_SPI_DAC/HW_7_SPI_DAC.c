@@ -42,7 +42,7 @@ int main()
     gpio_set_dir(PIN_CS,1);
     gpio_put(PIN_CS,1);
 
-    uint16_t voltages_0[400];
+    uint16_t voltages_0[400];//could do more samples but the plots look good
     uint16_t voltages_1[400];
     for(int i = 0; i<200;i++){
         voltages_0[i]=(uint16_t)(1023.9999*(i/199.0));
