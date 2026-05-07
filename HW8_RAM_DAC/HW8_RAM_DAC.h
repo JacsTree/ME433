@@ -14,6 +14,9 @@
  */
 static inline void put_dac(uint8_t adc_select, uint16_t voltage);
 
+/// @brief initializes chips
+static inline void init();
+
 /// @brief  Initilizes spi ram with 2000 bytes of sin data
 static inline void spi_ram_init();
 /// DAC Chip Select
