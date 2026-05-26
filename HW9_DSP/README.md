@@ -21,3 +21,17 @@ sigC:
 sigD:
 ![alt text](images/D.png)
 5.
+Low pass filtering:
+
+sigA (filter noise):
+![alt text](images/A_LP1.png)
+sigA (filter higher frequency signal) (very large lag):
+![alt text](images/A_LP2.png)
+sigB (filter noise): 
+![alt text](images/B_LP1.png)
+sigB (filter higher frequency signal):
+![alt text](images/B_LP2.png)
+sigC (no noise):
+![alt text](images/C_LP1.png)
+sigD:
+![alt text](images/D_LP1.png)
