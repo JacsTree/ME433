@@ -35,3 +35,15 @@ sigC (no noise):
 ![alt text](images/C_LP1.png)
 sigD:
 ![alt text](images/D_LP1.png)
+
+5.
+IIR Filtering:
+
+sigA:
+![alt text](images/A_IIR.png)
+sigB: 
+![alt text](images/B_IIR.png)
+sigC:
+![alt text](images/C_IIR.png)
+sigD:
+![alt text](images/D_IIR.png)
