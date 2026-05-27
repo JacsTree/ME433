@@ -47,3 +47,15 @@ sigC:
 ![alt text](images/C_IIR.png)
 sigD:
 ![alt text](images/D_IIR.png)
+
+5.
+FIR Filtering:
+
+sigA:
+![alt text](images/A_FIR.png)
+sigB: 
+![alt text](images/B_FIR.png)
+sigC:
+![alt text](images/C_FIR.png)
+sigD:
+![alt text](images/D_FIR.png)
