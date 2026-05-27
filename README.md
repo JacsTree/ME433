@@ -8,3 +8,4 @@ ME433 at Northwestern University
 - [Homework 6](dev_hid_composite/)
 - [Homework 7](HW_7_SPI_DAC/)
 - [Homework 8](HW8_RAM_DAC/)
+- [Homework 9](HW9_DSP/)
