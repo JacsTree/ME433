@@ -569,7 +569,7 @@ int main(void)
  8000466:	f002 fbbb 	bl	8002be0 <putchar>
 	  }
 
-	  if(HAL_UART_Receive(hcom_uart, &byte, 1, 0)==HAL_OK){
+	  if(HAL_UART_Receive(&hcom_uart[1], &byte, 1, 0)==HAL_OK){
  800046a:	1df9      	adds	r1, r7, #7
  800046c:	4808      	ldr	r0, [pc, #32]	@ (8000490 <main+0x9c>)
  800046e:	2300      	movs	r3, #0
@@ -587,7 +587,7 @@ int main(void)
  8000486:	e7e3      	b.n	8000450 <main+0x5c>
  8000488:	2000009c 	.word	0x2000009c
  800048c:	200000ac 	.word	0x200000ac
- 8000490:	20000150 	.word	0x20000150
+ 8000490:	200001e4 	.word	0x200001e4
 
 08000494 <SystemClock_Config>:
 /**

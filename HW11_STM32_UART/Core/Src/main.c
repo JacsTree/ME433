@@ -131,7 +131,7 @@ int main(void)
 	  		printf("%c",byte);
 	  }
 
-	  if(HAL_UART_Receive(hcom_uart, &byte, 1, 0)==HAL_OK){
+	  if(HAL_UART_Receive(&hcom_uart[1], &byte, 1, 0)==HAL_OK){
 	  	  	HAL_UART_Transmit(&huart1,&byte,1,0);
 	  }
 
