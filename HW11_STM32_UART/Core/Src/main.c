@@ -117,6 +117,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   uint8_t byte;
+  //char transmit[256];
   while (1)
   {
 //	  printf("It's working \r\n");
@@ -125,12 +126,13 @@ int main(void)
 //	  if(HAL_UART_Receive(&huart1, &byte, 1, HAL_MAX_DELAY)==HAL_OK){
 //		  HAL_UART_Transmit(&huart1, &byte, 1, HAL_MAX_DELAY);
 //	  }
-	  char transmit[256];
-	  scanf("%s",transmit);
-	  HAL_UART_Transmit(&huart1, (uint8_t*)transmit, sizeof(transmit), HAL_MAX_DELAY);
 
-	  if(HAL_UART_Receive(&huart1, &byte, 1, HAL_MAX_DELAY)==HAL_OK){
-	  		  printf("%c",byte);
+	  if(HAL_UART_Receive(&huart1, &byte, 1, 0)==HAL_OK){
+	  		printf("%c",byte);
+	  }
+
+	  if(HAL_UART_Receive(hcom_uart, &byte, 1, 0)==HAL_OK){
+	  	  	HAL_UART_Transmit(&huart1,&byte,1,0);
 	  }
 
 
