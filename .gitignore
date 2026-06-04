@@ -2,5 +2,4 @@
 **/__pycache__/*
 **/venv/*
 **/.vscode/*
-**/pico_sdk_import.cmake
 *.code-workspace
