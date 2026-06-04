@@ -35,4 +35,5 @@ ax1.set_ylabel('Amplitude')
 ax2.loglog(frq,abs(Y),'b') # plotting the fft
 ax2.set_xlabel('Freq (Hz)')
 ax2.set_ylabel('|Y(freq)|')
-plt.show()
+#plt.show() #plot
+plt.savefig("dummy_name.png") #save plot as picture .pdf for pdf

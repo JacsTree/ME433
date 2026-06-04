@@ -21,3 +21,5 @@ sigC:
 sigD:
 ![alt text](images/D.png)
 5.
+![alt text](plot.png)
+![alt text](fft.png)
