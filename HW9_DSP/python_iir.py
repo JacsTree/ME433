@@ -9,16 +9,22 @@ data1 = []  # column 1
 data2 = []  # low pass averaged data
 
 avg = 1000  # 800
+a = 0.8
+b = round(1 - a, 3)
 
-with open("sigB.csv") as f:
+with open("sigC.csv") as f:
     # open the csv file
     reader = csv.reader(f)
     for row in reader:
         # read the rows 1 one by one
         t.append(float(row[0]))  # leftmost column
         data1.append(float(row[1]))  # second column
-        window = data1[-avg:]  # takes last avg number of points (ignores if not enough)
-        data2.append(sum(window) / len(window))
+data2[0] = data1[0]
+for i in range(len(data1)):
+    if i == 0:
+        pass
+    else:
+        data2[i] = a * data2[i - 1] + b * data1[i]
 
 # dt = 1.0/10000.0 # 10kHz
 # t = np.arange(0.0, 1.0, dt) # 10s
@@ -32,7 +38,7 @@ ax2.set_xlabel("Freq (Hz)")
 ax2.set_ylabel("|Y(freq)|")
 ax1.plot(t, data1, "k")
 ax1.plot(t, data2, "r")
-plt.suptitle(f"Low Pass Filtered Data ({avg} points averaged)")
+plt.suptitle(f"IIR Filtered Data (A={a}, B={b})")
 
 
 Fs = len(t) / t[-1]  # sample rate
