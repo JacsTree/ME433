@@ -3,7 +3,14 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+
+#ifdef PICO_BOARD
 #include "hardware/i2c.h"
+#endif
+
+#ifdef STM32C092
+#include "stm32f4xx_hal.h"
+#endif
 
 #define AS5600_DEFAULT_ADDRESS  0x36
 
