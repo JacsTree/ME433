@@ -7,9 +7,6 @@
 
 #define AS5600_DEFAULT_ADDRESS  0x36
 
-static const float   AS5600_RAW_TO_DEGREES   =   360.0 / 4096;
-static const float   AS5600_DEGREES_TO_RAW    =  4096 / 360.0;
-
 struct AS5600{
     i2c_inst_t *i2c; 
     uint8_t SDA;

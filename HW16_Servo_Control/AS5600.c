@@ -12,12 +12,11 @@
 //  STATUS REGISTERS
 #define AS5600_STATUS    0x0B
 
-//  STATUS BITS
-#define AS5600_MAGNET_HIGH   0x08
-#define AS5600_MAGNET_LOW    0x10
-#define AS5600_MAGNET_DETECT 0x20
+// --------------- Conversion Numbers --------------- //
+static const float   AS5600_RAW_TO_DEGREES   =   360.0 / 4096;
+static const float   AS5600_DEGREES_TO_RAW    =  4096 / 360.0;
 
-// ------------------- Struct Creation ------------------- //
+// ----------------- Struct Creation ----------------- //
 struct AS5600 AS5600_create(uint8_t SDA_PIN, uint8_t SCL_PIN, i2c_inst_t *address){
     struct AS5600 encoder;
     encoder.SDA = SDA_PIN;
@@ -27,14 +26,14 @@ struct AS5600 AS5600_create(uint8_t SDA_PIN, uint8_t SCL_PIN, i2c_inst_t *addres
     return encoder;
 }
 
-// -------------- Helper Function Prototypes -------------- //
+// ------------ Helper Function Prototypes ------------ //
 
 /// Reads 8 bits from a register
 uint8_t readReg(struct AS5600* encoder, uint8_t reg);
 /// Reads 16 bits from a register
 uint16_t readReg2(struct AS5600* encoder, uint8_t reg);
 
-// ---------------------- Functions ---------------------- //
+// -------------------- Functions -------------------- //
 
 /// Returns True if AS5600 is detected
 bool AS5600_isConnected(struct AS5600 *encoder){
@@ -81,17 +80,17 @@ void AS5600_setOffset(struct AS5600* encoder, float degrees){
 
 /// Returns True if magnet is detected
 bool AS5600_magnetDetected(struct AS5600* encoder){
-    return (readReg(encoder, AS5600_STATUS) & AS5600_MAGNET_DETECT) > 1;
+    return (readReg(encoder, AS5600_STATUS) & 0x20) > 1;
 }
 
 /// Returns True if magnet is too close
 bool AS5600_magnetTooStrong(struct AS5600* encoder){
-    return (readReg(encoder, AS5600_STATUS) & AS5600_MAGNET_HIGH) > 1;
+    return (readReg(encoder, AS5600_STATUS) & 0x8) > 1;
 }
 
 /// Returns True if magnet is too far
 bool AS5600_magnetTooWeak(struct AS5600* encoder){
-    return (readReg(encoder, AS5600_STATUS) & AS5600_MAGNET_LOW) > 1;
+    return (readReg(encoder, AS5600_STATUS) & 0x10) > 1;
 }
 
 // ------------------- Helper Functions ------------------- //
@@ -112,7 +111,7 @@ uint8_t readReg(struct AS5600* encoder, uint8_t reg){
         &data,
         1,
         false);
-        
+
     return data;
 }
 uint16_t readReg2(struct AS5600* encoder, uint8_t reg){
