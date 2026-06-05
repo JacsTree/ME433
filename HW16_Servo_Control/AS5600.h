@@ -6,22 +6,22 @@
 
 #ifdef PICO_BOARD
 #include "hardware/i2c.h"
+typedef i2c_inst_t AS5600_I2C_t;
 #endif
 
-#ifdef STM32C092
-#include "stm32f4xx_hal.h"
+#ifdef STM32C0XX_NUCLEO_CONF_H
+//#include "stm32c0xx_hal_conf.h"
+typedef I2C_HandleTypeDef AS5600_I2C_t;
 #endif
 
 #define AS5600_DEFAULT_ADDRESS  0x36
 
 struct AS5600{
-    i2c_inst_t *i2c; 
-    uint8_t SDA;
-    uint8_t SCL;
+    AS5600_I2C_t *i2c;
     uint16_t offset;
 };
 
-struct AS5600 AS5600_create(uint8_t SDA_PIN, uint8_t SCL_PIN, i2c_inst_t *address);
+struct AS5600 AS5600_create(AS5600_I2C_t *address);
 
 bool AS5600_isConnected(struct AS5600 *enc);
 

@@ -1,6 +1,7 @@
 #include "AS5600.h"
 #include "hardware/i2c.h"
 #include <stdint.h>
+#include <stdlib.h>
 #include "math.h"
 
 // ------------------- Registers ------------------- //
@@ -16,12 +17,22 @@
 static const float   AS5600_RAW_TO_DEGREES   =   360.0 / 4096;
 static const float   AS5600_DEGREES_TO_RAW    =  4096 / 360.0;
 
+//
+static int as5600_write(
+    struct AS5600 *enc,
+    uint8_t *data,
+    size_t len,
+    bool nostop);
+
+static int as5600_read(
+    struct AS5600 *enc,
+    uint8_t *data,
+    size_t len);
+
 // ----------------- Struct Creation ----------------- //
-struct AS5600 AS5600_create(uint8_t SDA_PIN, uint8_t SCL_PIN, i2c_inst_t *address){
+struct AS5600 AS5600_create(AS5600_I2C_t *i2c){
     struct AS5600 encoder;
-    encoder.SDA = SDA_PIN;
-    encoder.SCL = SCL_PIN;
-    encoder.i2c = address;
+    encoder.i2c = i2c;
     encoder.offset = 0;
     return encoder;
 }
@@ -39,12 +50,24 @@ uint16_t readReg2(struct AS5600* encoder, uint8_t reg);
 bool AS5600_isConnected(struct AS5600 *encoder){
     uint8_t reg = 0x0B;
 
+#ifdef PICO_BOARD
+
     return i2c_write_blocking(
         encoder->i2c,
         AS5600_DEFAULT_ADDRESS,
         &reg,
         1,
         true) == 1;
+
+#elif defined(PLATFORM_STM32)
+
+    return HAL_I2C_IsDeviceReady(
+        encoder->i2c,
+        AS5600_DEFAULT_ADDRESS << 1,
+        3,
+        HAL_MAX_DELAY) == HAL_OK;
+
+    #endif
 }
 
 /// Reports raw angle (0-4095)
@@ -95,8 +118,11 @@ bool AS5600_magnetTooWeak(struct AS5600* encoder){
 
 // ------------------- Helper Functions ------------------- //
 
-uint8_t readReg(struct AS5600* encoder, uint8_t reg){
+uint8_t readReg(struct AS5600* encoder, uint8_t reg)
+{
     uint8_t data;
+
+#ifdef PICO_BOARD
 
     i2c_write_blocking(
         encoder->i2c,
@@ -112,10 +138,26 @@ uint8_t readReg(struct AS5600* encoder, uint8_t reg){
         1,
         false);
 
+#elif defined(PLATFORM_STM32)
+
+    HAL_I2C_Mem_Read(
+        encoder->i2c,
+        AS5600_DEFAULT_ADDRESS << 1,
+        reg,
+        I2C_MEMADD_SIZE_8BIT,
+        &data,
+        1,
+        HAL_MAX_DELAY);
+
+#endif
+
     return data;
 }
-uint16_t readReg2(struct AS5600* encoder, uint8_t reg){
+uint16_t readReg2(struct AS5600* encoder, uint8_t reg)
+{
     uint8_t buf[2];
+
+#ifdef PICO_BOARD
 
     i2c_write_blocking(
         encoder->i2c,
@@ -131,5 +173,19 @@ uint16_t readReg2(struct AS5600* encoder, uint8_t reg){
         2,
         false);
 
+#elif defined(PLATFORM_STM32)
+
+    HAL_I2C_Mem_Read(
+        encoder->i2c,
+        AS5600_DEFAULT_ADDRESS << 1,
+        reg,
+        I2C_MEMADD_SIZE_8BIT,
+        buf,
+        2,
+        HAL_MAX_DELAY);
+
+#endif
+
     return ((uint16_t)buf[0] << 8) | buf[1];
 }
+
