@@ -36,6 +36,7 @@ int main()
     }
     else return 0;
     
+    AS5600_setOffset(&encoder, 10.0);
 
     while (true) {
         // HX711
