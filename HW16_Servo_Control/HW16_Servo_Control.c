@@ -30,7 +30,7 @@ int main()
     }
     //init_ina219();
 
-    struct AS5600 encoder = AS5600_create(Data_pin, Clock_Pin, I2C_USED);
+    struct AS5600 encoder = AS5600_create(I2C_USED);
     if(AS5600_isConnected(&encoder)){
         printf("connected\n");
     }
