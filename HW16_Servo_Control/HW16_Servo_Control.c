@@ -47,12 +47,12 @@ int main()
         if(!AS5600_magnetDetected(&encoder)){
             printf("Magnet Not Detected!\n");
         }
-        // else if(AS5600_magnetTooStrong(&encoder)){
-        //     printf("Magnet too close!\n");
-        // }
-        // else if(AS5600_magnetTooWeak(&encoder)){
-        //     printf("Magnet too far!\n");
-        // }
+        else if(AS5600_magnetTooStrong(&encoder)){
+            printf("Magnet too close!\n");
+        }
+        else if(AS5600_magnetTooWeak(&encoder)){
+            printf("Magnet too far!\n");
+        }
         else{
             printf("Raw angle: %d, Read Angle: %f\n",AS5600_rawAngle(&encoder),AS5600_readAngle(&encoder));
         }
