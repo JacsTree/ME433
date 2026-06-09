@@ -6,10 +6,17 @@
 //#include "ina219.h"
 #include "hardware/i2c.h"
 #include "AS5600.h"
+#include "HX711.h"
 
-#define I2C_USED i2c0
-#define Data_pin 16
-#define Clock_Pin 17
+#define DATA_PIN 16
+#define CLOCK_PIN 17
+
+#define GRAMS_PER_COUNT -0.01 // TODO: update
+
+
+#define I2C_USED i2c1
+#define Data_pin 14
+#define Clock_Pin 15
 
 int main()
 {
@@ -24,6 +31,10 @@ int main()
     gpio_pull_up(Data_pin);
     gpio_pull_up(Clock_Pin);
 
+    struct HX711 sensor = HX711_create(CLOCK_PIN, DATA_PIN);
+    HX711_tare(&sensor);
+    HX711_set_scale(&sensor, GRAMS_PER_COUNT);
+
     while (!stdio_usb_connected())
     {
         sleep_ms(100);
@@ -35,8 +46,8 @@ int main()
         printf("connected\n");
     }
     else return 0;
-    
-    AS5600_setOffset(&encoder, 10.0);
+
+    AS5600_setOffset(&encoder, 80.0);
 
     while (true) {
         // HX711
@@ -44,18 +55,24 @@ int main()
         // printf("Raw ADC:%d\n",raw_adc);
         // sleep_ms(300);
 
+        // int32_t raw = HX711_read_count(&sensor);
+        // printf("raw: %ld\n", raw);
+        float grams = HX711_read_grams(&sensor);
+        // printf("grams: %f\n", grams);
+
         sleep_ms(100);
         if(!AS5600_magnetDetected(&encoder)){
             printf("Magnet Not Detected!\n");
         }
-        else if(AS5600_magnetTooStrong(&encoder)){
-            printf("Magnet too close!\n");
-        }
-        else if(AS5600_magnetTooWeak(&encoder)){
-            printf("Magnet too far!\n");
-        }
+        // else if(AS5600_magnetTooStrong(&encoder)){
+        //     printf("Magnet too close!\n");
+        // }
+        // else if(AS5600_magnetTooWeak(&encoder)){
+        //     printf("Magnet too far!\n");
+        // }
         else{
             printf("Raw angle: %d, Read Angle: %f\n",AS5600_rawAngle(&encoder),AS5600_readAngle(&encoder));
+            printf("grams: %f\n", grams);
         }
         
     }

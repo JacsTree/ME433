@@ -37,7 +37,8 @@ pico_sdk_init()
 
 add_executable(HW16_Servo_Control HW16_Servo_Control.c 
                                     ina219.c
-                                    AS5600.c)
+                                    AS5600.c
+                                    HX711.c)
 
 pico_set_program_name(HW16_Servo_Control "HW16_Servo_Control")
 pico_set_program_version(HW16_Servo_Control "0.1")
