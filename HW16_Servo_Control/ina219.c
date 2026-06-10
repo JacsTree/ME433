@@ -9,9 +9,9 @@
 #define INA219_REG_CURRENT 0x04 // current register
 #define INA219_REG_CALIBRATION 0x05 // calibration register
 
-#define SDA_PIN 8
-#define SCL_PIN 9
-#define I2C_INST i2c0
+#define SDA_PIN 14
+#define SCL_PIN 15
+#define I2C_INST i2c1
 
 // private functions
 void writeINA219(int reg, int value);
@@ -19,11 +19,11 @@ signed short readINA219(unsigned char reg);
 
 void init_ina219(){
     // init I2C on GP14 (SDA) and GP15 (SCL) on I2C1
-    i2c_init(I2C_INST, 400 * 1000); // baud of 400kHz
-    gpio_set_function(SDA_PIN, GPIO_FUNC_I2C);
-    gpio_set_function(SCL_PIN, GPIO_FUNC_I2C);
-    gpio_pull_up(SDA_PIN);
-    gpio_pull_up(SCL_PIN);
+    // i2c_init(I2C_INST, 400 * 1000); // baud of 400kHz
+    // gpio_set_function(SDA_PIN, GPIO_FUNC_I2C);
+    // gpio_set_function(SCL_PIN, GPIO_FUNC_I2C);
+    // gpio_pull_up(SDA_PIN);
+    // gpio_pull_up(SCL_PIN);
 
     // set the INA219 sensitivity - 10 bit, plus/minus160mV, 148us per sample
     unsigned short ina219_calValue = 1024;
