@@ -12,7 +12,7 @@
 
 #define count 100
 
-const float A = 0.5; //new data
+const float A = 0.3; //new data
 const float B = 1-A; //old data
 
 int32_t times[count]; // 12.5 sec of data
@@ -60,7 +60,7 @@ int main()
                 }
                 times[0] = 0;
 
-                for(int i = 1; i<count; i++){
+                for(int i = 0; i<count; i++){
                     printf("%d %d %d\n",times[i],counts[i],iir[i]);
                 }
             }
