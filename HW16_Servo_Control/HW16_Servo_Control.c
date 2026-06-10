@@ -24,6 +24,10 @@
 
 uint slice_num;
 
+struct repeating_timer upd_timer;
+
+volatile uint16_t raw_adc;
+
 void init_hbridge(){
     gpio_set_function(IN1, GPIO_FUNC_PWM);
     gpio_set_function(IN2, GPIO_FUNC_PWM);
@@ -34,19 +38,34 @@ void init_hbridge(){
     pwm_set_enabled(slice_num, true);
 }
 
-void set_duty_cycle(float wownumber){ // -1 -> 1
-    if (wownumber>1)wownumber = 1;
-    if (wownumber<-1)wownumber = -1;
+void set_duty_cycle(float duty_cycle){ // -1 -> 1
+    if (duty_cycle>1)duty_cycle = 1;
+    if (duty_cycle<-1)duty_cycle = -1;
 
-    if (wownumber>0){
+    if (duty_cycle>0){
         pwm_set_chan_level(slice_num, PWM_CHAN_A, 7499);
-        pwm_set_chan_level(slice_num, PWM_CHAN_B, (int)((1.0-wownumber)*7499));
+        pwm_set_chan_level(slice_num, PWM_CHAN_B, (int)((1.0-duty_cycle)*7499));
     }
     else{
         pwm_set_chan_level(slice_num, PWM_CHAN_B, 7499);
-        pwm_set_chan_level(slice_num, PWM_CHAN_A, (int)((1.0+wownumber)*7499));
+        pwm_set_chan_level(slice_num, PWM_CHAN_A, (int)((1.0+duty_cycle)*7499));
     }
 }
+
+// makes sure the arm does not rip itself apart
+void safety_check(){
+    raw_adc = adc_read();
+    if(raw_adc>3000||raw_adc<500){
+        pwm_set_chan_level(slice_num, PWM_CHAN_A, 7499);
+        pwm_set_chan_level(slice_num, PWM_CHAN_B, 7499);
+    }
+}
+
+bool repeating_timer_callback(__unused struct repeating_timer *t){
+    safety_check();
+    return true;
+}
+
 
 int main()
 {
@@ -82,9 +101,11 @@ int main()
 
     AS5600_setOffset(&encoder, 275.0);
 
+    add_repeating_timer_ms(-1, repeating_timer_callback, NULL, &upd_timer);
+
     while (true) {
         // HX711
-        uint16_t raw_adc = adc_read();
+        //raw_adc = adc_read();
         // sleep_ms(300);
 
         // int32_t raw = HX711_read_count(&sensor);
@@ -92,7 +113,7 @@ int main()
         float grams = HX711_read_grams(&sensor);
         // printf("grams: %f\n", grams);
 
-        //sleep_ms(100);
+        sleep_ms(100);
         if(!AS5600_magnetDetected(&encoder)){
             printf("Magnet Not Detected!\n");
         }
@@ -108,13 +129,13 @@ int main()
             printf("Raw ADC: %d\n",raw_adc);
             printf("Current: %f",read_ina219());
 
-            set_duty_cycle(0.4);
-            sleep_ms(200);
-            set_duty_cycle(0);
-            sleep_ms(50);
-            set_duty_cycle(-0.4);
-            sleep_ms(200);
-            set_duty_cycle(0);
+            // set_duty_cycle(0.4);
+            // sleep_ms(200);
+            // set_duty_cycle(0);
+            // sleep_ms(50);
+            // set_duty_cycle(-0.4);
+            // sleep_ms(200);
+            // set_duty_cycle(0);
 
         }
         
