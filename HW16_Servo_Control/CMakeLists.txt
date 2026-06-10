@@ -49,7 +49,8 @@ pico_enable_stdio_usb(HW16_Servo_Control 1)
 
 # Add the standard library to the build
 target_link_libraries(HW16_Servo_Control
-        pico_stdlib)
+        pico_stdlib
+        hardware_sync)
 
 # Add the standard include files to the build
 target_include_directories(HW16_Servo_Control PRIVATE

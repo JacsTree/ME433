@@ -9,6 +9,7 @@
 #include "HX711.h"
 #include "ina219.h"
 #include <math.h>
+#include "hardware/sync.h"
 
 #define DATA_PIN 16
 #define CLOCK_PIN 17
@@ -28,6 +29,9 @@ uint slice_num;
 struct repeating_timer upd_timer;
 
 volatile uint16_t raw_adc;
+
+volatile float angle;
+struct AS5600 encoder;
 
 void init_hbridge(){
     gpio_set_function(IN1, GPIO_FUNC_PWM);
@@ -53,7 +57,7 @@ void set_duty_cycle(float duty_cycle){ // -1 -> 1
     }
 }
 
-// makes sure the arm does not rip itself apart
+// !! This kills all power to the motor if it goes outside of the safe range !!
 void safety_check(){
     raw_adc = adc_read();
     if(raw_adc>3000||raw_adc<550){
@@ -62,8 +66,12 @@ void safety_check(){
     }
 }
 
+
+
 bool repeating_timer_callback(__unused struct repeating_timer *t){
     safety_check();
+
+    // angle = AS5600_readAngle(&encoder);
     return true;
 }
 
@@ -81,9 +89,9 @@ int main()
     gpio_pull_up(Data_pin);
     gpio_pull_up(Clock_Pin);
 
-    struct HX711 sensor = HX711_create(CLOCK_PIN, DATA_PIN);
-    HX711_tare(&sensor);
-    HX711_set_scale(&sensor, GRAMS_PER_COUNT);
+    // struct HX711 sensor = HX711_create(CLOCK_PIN, DATA_PIN);
+    // HX711_tare(&sensor);
+    // HX711_set_scale(&sensor, GRAMS_PER_COUNT);
 
     init_ina219();
     init_hbridge();
@@ -94,13 +102,13 @@ int main()
     }
     //init_ina219();
 
-    struct AS5600 encoder = AS5600_create(I2C_USED);
-    if(AS5600_isConnected(&encoder)){
-        printf("connected\n");
-    }
-    else return 0;
+    // encoder = AS5600_create(I2C_USED);
+    // if(AS5600_isConnected(&encoder)){
+    //     printf("connected\n");
+    // }
+    // else return 0;
 
-    AS5600_setOffset(&encoder, 275.0);
+    // AS5600_setOffset(&encoder, 275.0);
 
     add_repeating_timer_ms(-1, repeating_timer_callback, NULL, &upd_timer);
 
@@ -111,55 +119,57 @@ int main()
 
         // int32_t raw = HX711_read_count(&sensor);
         // printf("raw: %ld\n", raw);
-        float grams = HX711_read_grams(&sensor);
+
+        // uint32_t irq_state = save_and_disable_interrupts();
+        //float grams = HX711_read_grams(&sensor);
+        // restore_interrupts(irq_state);
         // printf("grams: %f\n", grams);
 
         //sleep_ms(100);
-        if(!AS5600_magnetDetected(&encoder)){
-            printf("Magnet Not Detected!\n");
-        }
+        
+        
         // else if(AS5600_magnetTooStrong(&encoder)){
         //     printf("Magnet too close!\n");
         // }
         // else if(AS5600_magnetTooWeak(&encoder)){
         //     printf("Magnet too far!\n");
         // }
-        else{
+    
             // printf("Raw angle: %d, Read Angle: %f\n",AS5600_rawAngle(&encoder),AS5600_readAngle(&encoder));
             // printf("grams: %f\n", grams);
             // printf("Raw ADC: %d\n",raw_adc);
             // printf("Current: %f",read_ina219());
 
 
-            // user assist
-            if(fabs(grams)>60){
-                bool dir = false; // right
-                if(grams<0) dir = true;
+        // user assist
+        // if(fabs(grams)>60){
+        //     bool dir = false; // right
+        //     if(grams<0) dir = true;
 
-                float bgrams = fabs(grams);
-                bgrams-=60;
+        //     float bgrams = fabs(grams);
+        //     bgrams-=60;
 
-                bgrams*=0.005;
+        //     bgrams*=0.005;
 
-                if(!dir) {
-                    bgrams*=-0.7;
-                }
+        //     if(!dir) {
+        //         bgrams*=-0.7;
+        //     }
 
-                set_duty_cycle(bgrams);
-            }
-            else{
-                set_duty_cycle(0);
-            }
+        //     set_duty_cycle(bgrams);
+        // }
+        // else{
+        //     set_duty_cycle(0);
+        // }
 
-            // set_duty_cycle(0.4);
-            // sleep_ms(200);
-            // set_duty_cycle(0);
-            // sleep_ms(50);
-            // set_duty_cycle(-0.4);
-            // sleep_ms(200);
-            // set_duty_cycle(0);
+        // set_duty_cycle(0.4);
+        // sleep_ms(200);
+        // set_duty_cycle(0);
+        // sleep_ms(50);
+        // set_duty_cycle(-0.4);
+        // sleep_ms(200);
+        // set_duty_cycle(0);
 
-        }
+        
         
     }
 }
