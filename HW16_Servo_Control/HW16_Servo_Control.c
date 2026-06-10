@@ -66,6 +66,7 @@ int main()
     HX711_set_scale(&sensor, GRAMS_PER_COUNT);
 
     init_ina219();
+    init_hbridge();
 
     while (!stdio_usb_connected())
     {
@@ -79,7 +80,7 @@ int main()
     }
     else return 0;
 
-    AS5600_setOffset(&encoder, 265.0);
+    AS5600_setOffset(&encoder, 275.0);
 
     while (true) {
         // HX711
@@ -91,7 +92,7 @@ int main()
         float grams = HX711_read_grams(&sensor);
         // printf("grams: %f\n", grams);
 
-        sleep_ms(100);
+        //sleep_ms(100);
         if(!AS5600_magnetDetected(&encoder)){
             printf("Magnet Not Detected!\n");
         }
@@ -106,6 +107,15 @@ int main()
             printf("grams: %f\n", grams);
             printf("Raw ADC: %d\n",raw_adc);
             printf("Current: %f",read_ina219());
+
+            set_duty_cycle(0.4);
+            sleep_ms(200);
+            set_duty_cycle(0);
+            sleep_ms(50);
+            set_duty_cycle(-0.4);
+            sleep_ms(200);
+            set_duty_cycle(0);
+
         }
         
     }
