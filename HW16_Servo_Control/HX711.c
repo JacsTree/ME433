@@ -91,7 +91,7 @@ int32_t HX711_read_count_avg(struct HX711* sensor, int N){
 
 /// Tares HX711
 int32_t HX711_tare(struct HX711* sensor){
-    sensor->OFFSET=HX711_read_count_avg(sensor, 20); //20 is decent and fairy quick
+    sensor->OFFSET=HX711_read_count_avg(sensor, 40); //20 is decent and fairy quick
     return sensor->OFFSET;
 }
 

@@ -8,6 +8,7 @@
 #include "AS5600.h"
 #include "HX711.h"
 #include "ina219.h"
+#include <math.h>
 
 #define DATA_PIN 16
 #define CLOCK_PIN 17
@@ -55,7 +56,7 @@ void set_duty_cycle(float duty_cycle){ // -1 -> 1
 // makes sure the arm does not rip itself apart
 void safety_check(){
     raw_adc = adc_read();
-    if(raw_adc>3000||raw_adc<500){
+    if(raw_adc>3000||raw_adc<550){
         pwm_set_chan_level(slice_num, PWM_CHAN_A, 7499);
         pwm_set_chan_level(slice_num, PWM_CHAN_B, 7499);
     }
@@ -113,7 +114,7 @@ int main()
         float grams = HX711_read_grams(&sensor);
         // printf("grams: %f\n", grams);
 
-        sleep_ms(100);
+        //sleep_ms(100);
         if(!AS5600_magnetDetected(&encoder)){
             printf("Magnet Not Detected!\n");
         }
@@ -124,10 +125,31 @@ int main()
         //     printf("Magnet too far!\n");
         // }
         else{
-            printf("Raw angle: %d, Read Angle: %f\n",AS5600_rawAngle(&encoder),AS5600_readAngle(&encoder));
-            printf("grams: %f\n", grams);
-            printf("Raw ADC: %d\n",raw_adc);
-            printf("Current: %f",read_ina219());
+            // printf("Raw angle: %d, Read Angle: %f\n",AS5600_rawAngle(&encoder),AS5600_readAngle(&encoder));
+            // printf("grams: %f\n", grams);
+            // printf("Raw ADC: %d\n",raw_adc);
+            // printf("Current: %f",read_ina219());
+
+
+            // user assist
+            if(fabs(grams)>60){
+                bool dir = false; // right
+                if(grams<0) dir = true;
+
+                float bgrams = fabs(grams);
+                bgrams-=60;
+
+                bgrams*=0.005;
+
+                if(!dir) {
+                    bgrams*=-0.7;
+                }
+
+                set_duty_cycle(bgrams);
+            }
+            else{
+                set_duty_cycle(0);
+            }
 
             // set_duty_cycle(0.4);
             // sleep_ms(200);
