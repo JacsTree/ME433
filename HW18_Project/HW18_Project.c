@@ -67,7 +67,7 @@ bool repeating_timer_callback(__unused struct repeating_timer *t){
     return true;
 }
 
-
+//TODO: putting i2c n inturrupt breaks (use 2 different i2c or update both at same time in loop)
 int main()
 {
     stdio_init_all();
