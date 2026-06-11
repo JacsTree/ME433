@@ -130,16 +130,13 @@ bool repeating_timer_callback(__unused struct repeating_timer *t)
         }
 
         if(counter >= 400){
-
             pwm_set_chan_level(slice_num, PWM_CHAN_A, 7499);
             pwm_set_chan_level(slice_num, PWM_CHAN_B, 7499);
 
             state = 0;
-
             counter = 0;
-
             eint = 0;
-
+            
             desired_current = fabsf(desired_current);
         }
     }
