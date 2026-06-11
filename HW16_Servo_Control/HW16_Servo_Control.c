@@ -1,3 +1,4 @@
+//#include <pico/platform/common.h>
 #include <pico/time.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -33,6 +34,20 @@ volatile uint16_t raw_adc;
 volatile float angle;
 struct AS5600 encoder;
 
+#define LENGTH 400
+
+volatile int state = 0;
+
+volatile float kp = 0.00082;
+volatile float ki = 0.006;
+
+volatile float desired_current = 150.0f;
+volatile float actual_current = 0.0f;
+
+volatile float current_log[LENGTH];
+volatile float desired_log[LENGTH];
+volatile int index_log[LENGTH];
+
 void init_hbridge(){
     gpio_set_function(IN1, GPIO_FUNC_PWM);
     gpio_set_function(IN2, GPIO_FUNC_PWM);
@@ -58,20 +73,77 @@ void set_duty_cycle(float duty_cycle){ // -1 -> 1
 }
 
 // !! This kills all power to the motor if it goes outside of the safe range !!
-void safety_check(){
+bool safety_check(void){
     raw_adc = adc_read();
-    if(raw_adc>3000||raw_adc<550){
+
+    if(raw_adc < 550 || raw_adc > (4095-1090)){
         pwm_set_chan_level(slice_num, PWM_CHAN_A, 7499);
         pwm_set_chan_level(slice_num, PWM_CHAN_B, 7499);
+        return false;
     }
+
+    return true;
 }
 
 
 
-bool repeating_timer_callback(__unused struct repeating_timer *t){
-    safety_check();
+bool repeating_timer_callback(__unused struct repeating_timer *t)
+{
+    static volatile int counter = 0;
+    static volatile float eint = 0.0f;
 
-    // angle = AS5600_readAngle(&encoder);
+    if(!safety_check()){//kill everything
+        state = 0;
+        counter = 0;
+        eint = 0;
+        return true;
+    }
+
+    if(state == 1){
+
+        actual_current = -1*read_ina219();
+
+        float error = desired_current - actual_current;
+
+        eint += error * 0.001f;
+
+        float u = kp*error + ki*eint;
+
+        set_duty_cycle(u);
+
+        index_log[counter] = counter;
+        desired_log[counter] = desired_current;
+        current_log[counter] = actual_current;
+
+        counter++;
+
+        if(counter == 100){
+            desired_current = -desired_current;
+        }
+
+        if(counter == 200){
+            desired_current = -desired_current;
+        }
+
+        if(counter == 300){
+            desired_current = -desired_current;
+        }
+
+        if(counter >= 400){
+
+            pwm_set_chan_level(slice_num, PWM_CHAN_A, 7499);
+            pwm_set_chan_level(slice_num, PWM_CHAN_B, 7499);
+
+            state = 0;
+
+            counter = 0;
+
+            eint = 0;
+
+            desired_current = fabsf(desired_current);
+        }
+    }
+
     return true;
 }
 
@@ -113,6 +185,28 @@ int main()
     add_repeating_timer_ms(-1, repeating_timer_callback, NULL, &upd_timer);
 
     while (true) {
+        int c = getchar_timeout_us(0);
+
+        if(c == 'a')
+        {
+            state = 1;
+
+            while(state == 1)
+            {
+                tight_loop_contents();
+            }
+
+            for(int i=0;i<LENGTH;i++)
+            {
+                printf("%d,%f,%f\n",
+                    index_log[i],
+                    desired_log[i],
+                    current_log[i]);
+            }
+
+            printf("DONE\n");
+        }
+        //tight_loop_contents();
         // HX711
         //raw_adc = adc_read();
         // sleep_ms(300);
