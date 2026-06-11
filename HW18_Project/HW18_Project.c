@@ -151,7 +151,7 @@ int main()
             //     set_duty_cycle(0);
             // }
 
-            // bump
+            // toggle switch effect
 
             float angle = AS5600_readAngle(&encoder);
             if(angle<80&&angle>75){
