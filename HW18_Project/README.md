@@ -1,4 +1,4 @@
-# TITle  
+# Haptic Paddle 
 ---  
 ## What haptic feedback should look like  
 ---
@@ -14,14 +14,12 @@ Starting out, I was having issues with connectivity between the Pico and STM32 b
   
 For this printed files, I used the 3D print example files from Prof. Marchuck except the arm piece was edited to change how it mounts and a place to add a metal nut inside for screwing the thimble to was added.  
 ![](Project.jpg)
- I did not get to redesigning all of the parts, but that likely would have involved a redesign of the thimble to sit on one side of the load cell and clip onto its tab. I also likely would remove the AS5600  
- encoder entirely as it increases mounting difficulty, and using one chip, having the AS5600 and the potentiometer is a bit redundant.  
+ I did not get to redesigning all of the parts, but that likely would have involved a redesign of the thimble to sit on one side of the load cell and clip onto its tab. I also likely would remove the AS5600 encoder entirely as it increases mounting difficulty, and using one chip, having the AS5600 and the potentiometer is a bit redundant.  
 ---
 ## Circuit diagram
 ---
 ![](Diagram.jpg)
-Functionally, the code reads the angle to decide where oon the displacement curve it lies, then uses either the force sensor or  
-current sensor (or both) to determine which way the user is pushing, and then attempts to change the feel of this pushing.
+Functionally, the code reads the angle to decide where oon the displacement curve it lies, then uses either the force sensor or   current sensor (or both) to determine which way the user is pushing, and then attempts to change the feel of this pushing.
 
 angle -> force reading -> current level -> pwm set (inside controller)  
 
@@ -55,10 +53,7 @@ if(fabs(grams)>60){
             }
 ```
 
-I tried getting control to use current(correct) and not pwm(inaccurate), as  
-current is the correct value for setting force, but some amount  
-of noise or coding errors resulted in an unresolved error where it shoots the  
-whole paddle in a direction while sitting untouched.  
+I tried getting control to use current(correct) and not pwm(inaccurate), as current is the correct value for setting force, but some amount of noise or coding errors resulted in an unresolved error where it shoots the whole paddle in a direction while sitting untouched.  
 
 ```c
 // interrupt change for that:
