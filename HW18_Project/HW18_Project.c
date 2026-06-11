@@ -132,23 +132,81 @@ int main()
 
 
             // user assist arm mode
-            if(fabs(grams)>60){
-                bool dir = false; // right
-                if(grams<0) dir = true;
+            // if(fabs(grams)>60){
+            //     bool dir = false; // right
+            //     if(grams<0) dir = true;
 
-                float bgrams = fabs(grams);
-                bgrams-=60;
+            //     float bgrams = fabs(grams);
+            //     bgrams-=60;
 
-                bgrams*=0.005;
+            //     bgrams*=0.005;
 
-                if(!dir) {
-                    bgrams*=-0.7;
+            //     if(!dir) {
+            //         bgrams*=-0.7;
+            //     }
+
+            //     set_duty_cycle(bgrams);
+            // }
+            // else{
+            //     set_duty_cycle(0);
+            // }
+
+            // bump
+
+            float angle = AS5600_readAngle(&encoder);
+            if(angle<80&&angle>75){
+                if(fabs(grams)>50){
+                    set_duty_cycle(-0.4);
+
                 }
-
-                set_duty_cycle(bgrams);
+                else{
+                    set_duty_cycle(0);
+                }
             }
-            else{
+            else if(angle<85&&angle>80){
+                if(fabs(grams)>50){
+                    set_duty_cycle(0.2);
+                }
+                else{
+                    set_duty_cycle(0);
+                }
+            }
+            else if(angle<135&&angle>130){
+                if(fabs(grams)>50){
+                    set_duty_cycle(-0.4);
+                }
+                else{
+                    set_duty_cycle(0);
+                }
+            }
+            else if(angle<140&&angle>135){
+                if(fabs(grams)>50){
+                    set_duty_cycle(0.2);
+                }
+                else{
+                    set_duty_cycle(0);
+                }
+            }
+            else{ // user assist
                 set_duty_cycle(0);
+                // if(fabs(grams)>60){
+                //     bool dir = false; // right
+                //     if(grams<0) dir = true;
+
+                //     float bgrams = fabs(grams);
+                //     bgrams-=60;
+
+                //     bgrams*=0.005;
+
+                //     if(!dir) {
+                //         bgrams*=-0.7;
+                //     }
+
+                //     set_duty_cycle(bgrams);
+                // }
+                // else{
+                //     set_duty_cycle(0);
+                // }
             }
 
             // set_duty_cycle(0.4);

@@ -136,7 +136,7 @@ bool repeating_timer_callback(__unused struct repeating_timer *t)
             state = 0;
             counter = 0;
             eint = 0;
-            
+
             desired_current = fabsf(desired_current);
         }
     }
@@ -217,15 +217,15 @@ int main()
         // printf("grams: %f\n", grams);
 
         //sleep_ms(100);
-        
-        
+
+
         // else if(AS5600_magnetTooStrong(&encoder)){
         //     printf("Magnet too close!\n");
         // }
         // else if(AS5600_magnetTooWeak(&encoder)){
         //     printf("Magnet too far!\n");
         // }
-    
+
             // printf("Raw angle: %d, Read Angle: %f\n",AS5600_rawAngle(&encoder),AS5600_readAngle(&encoder));
             // printf("grams: %f\n", grams);
             // printf("Raw ADC: %d\n",raw_adc);
@@ -260,7 +260,7 @@ int main()
         // sleep_ms(200);
         // set_duty_cycle(0);
 
-        
-        
+
+
     }
 }
